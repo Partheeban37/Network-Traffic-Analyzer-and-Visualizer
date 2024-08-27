@@ -44,3 +44,13 @@ if __name__ == "__main__":
 
     # Start sniffing network packets
     start_sniffing()
+
+    
+    
+# How to Run the Project
+    
+## Step 1: Capture Network Traffic
+Run the capture_traffic.py script to start capturing network packets:
+
+python capture_traffic.py
+
