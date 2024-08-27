@@ -1,4 +1,4 @@
-# vs
+# Network Traffic Analyzer and Visualizer
 
 from scapy.all import sniff, IP
 import sqlite3
