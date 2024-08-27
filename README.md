@@ -1,0 +1,46 @@
+# vs
+
+from scapy.all import sniff, IP
+import sqlite3
+
+# Function to process each captured packet
+def process_packet(packet):
+    conn = sqlite3.connect('network_traffic.db')
+    cursor = conn.cursor()
+
+    # Check if the packet has an IP layer
+    if packet.haslayer(IP):
+        src_ip = packet[IP].src
+        dst_ip = packet[IP].dst
+        protocol = packet[IP].proto
+        length = len(packet)
+
+        # Inserting the packet information into the database
+        cursor.execute('''INSERT INTO traffic (src_ip, dst_ip, protocol, length)
+                          VALUES (?, ?, ?, ?)''', (src_ip, dst_ip, protocol, length))
+        conn.commit()
+
+    conn.close()
+
+# Function to start sniffing packets
+def start_sniffing():
+    sniff(prn=process_packet, store=0)
+
+if __name__ == "__main__":
+    conn = sqlite3.connect('network_traffic.db')
+    cursor = conn.cursor()
+
+    # Creating a simple table to store packet data
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS traffic (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            src_ip TEXT,
+            dst_ip TEXT,
+            protocol INTEGER,
+            length INTEGER
+        )
+    ''')
+    conn.close()
+
+    # Start sniffing network packets
+    start_sniffing()
