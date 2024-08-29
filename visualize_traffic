@@ -1,0 +1,26 @@
+import sqlite3
+import matplotlib.pyplot as plt
+
+# Function to visualize network traffic
+def visualize_traffic():
+    conn = sqlite3.connect('network_traffic.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT protocol, COUNT(*) FROM traffic GROUP BY protocol")
+    protocols = cursor.fetchall()
+
+    protocols_map = {1: 'ICMP', 6: 'TCP', 17: 'UDP'}
+
+    labels = [protocols_map.get(proto, 'Other') for proto, _ in protocols]
+    sizes = [count for _, count in protocols]
+
+    # Plotting the data as a pie chart
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
+    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title("Network Traffic by Protocol")
+    plt.show()
+
+    conn.close()
+
+if __name__ == "__main__":
+    visualize_traffic()
